@@ -1,0 +1,7 @@
+# Drop into /etc/fail2ban/jail.local  (thresholds mirror the detection rule: 5 failures / 5 minutes)
+[sshd]
+enabled  = true
+port     = ssh
+maxretry = 5
+findtime = 5m
+bantime  = 24h

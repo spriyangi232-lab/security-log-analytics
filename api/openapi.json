@@ -1,0 +1,2885 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Security Log Analytics API",
+  "description": "Read-only API. Errors use application/problem+json.",
+  "version": "1.0.0"
+ },
+ "paths": {
+  "/api/v1/datasets": {
+   "get": {
+    "tags": [
+     "datasets"
+    ],
+    "summary": "List Datasets",
+    "operationId": "list_datasets_api_v1_datasets_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "$ref": "#/components/schemas/DatasetSummary"
+         },
+         "type": "array",
+         "title": "Response List Datasets Api V1 Datasets Get"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "Not Found",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Unprocessable Content",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      }
+     }
+    }
+   },
+   "post": {
+    "tags": [
+     "datasets"
+    ],
+    "summary": "Upload Dataset",
+    "description": "Upload an OpenSSH syslog file. Analysis runs in the background; poll /jobs/{job_id}.",
+    "operationId": "upload_dataset_api_v1_datasets_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_upload_dataset_api_v1_datasets_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/JobOut"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "Not Found",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Unprocessable Content",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/overview": {
+   "get": {
+    "tags": [
+     "overview"
+    ],
+    "summary": "Get Overview",
+    "operationId": "get_overview_api_v1_datasets__dataset_id__overview_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "range",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "24h",
+        "7d",
+        "all"
+       ],
+       "type": "string",
+       "default": "7d",
+       "title": "Range"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Overview"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/attackers": {
+   "get": {
+    "tags": [
+     "attackers"
+    ],
+    "summary": "Get Attackers",
+    "operationId": "get_attackers_api_v1_datasets__dataset_id__attackers_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "range",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "24h",
+        "7d",
+        "all"
+       ],
+       "type": "string",
+       "default": "7d",
+       "title": "Range"
+      }
+     },
+     {
+      "name": "sort",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "rank",
+        "ip",
+        "attempts",
+        "first_seen",
+        "last_seen",
+        "accounts",
+        "severity"
+       ],
+       "type": "string",
+       "default": "attempts",
+       "title": "Sort"
+      }
+     },
+     {
+      "name": "dir",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "asc",
+        "desc"
+       ],
+       "type": "string",
+       "default": "desc",
+       "title": "Dir"
+      }
+     },
+     {
+      "name": "q",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Q"
+      }
+     },
+     {
+      "name": "severity",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "Critical",
+          "High",
+          "Medium",
+          "Low",
+          "No incident"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Severity"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 500,
+       "minimum": 1,
+       "default": 25,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "offset",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 0,
+       "default": 0,
+       "title": "Offset"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AttackerPage"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/attackers/{ip}": {
+   "get": {
+    "tags": [
+     "attackers"
+    ],
+    "summary": "Get Attacker",
+    "operationId": "get_attacker_api_v1_datasets__dataset_id__attackers__ip__get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "ip",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Ip"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AttackerDetail"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/attackers/{ip}/events": {
+   "get": {
+    "tags": [
+     "attackers"
+    ],
+    "summary": "Get Attacker Events",
+    "operationId": "get_attacker_events_api_v1_datasets__dataset_id__attackers__ip__events_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "ip",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Ip"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 500,
+       "minimum": 1,
+       "default": 50,
+       "title": "Limit"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AttackerEvents"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/exports/attackers.csv": {
+   "get": {
+    "tags": [
+     "exports"
+    ],
+    "summary": "Export Attackers",
+    "operationId": "export_attackers_api_v1_datasets__dataset_id__exports_attackers_csv_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "range",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "24h",
+        "7d",
+        "all"
+       ],
+       "type": "string",
+       "default": "7d",
+       "title": "Range"
+      }
+     },
+     {
+      "name": "severity",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "Critical",
+          "High",
+          "Medium",
+          "Low",
+          "No incident"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Severity"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/rules": {
+   "get": {
+    "tags": [
+     "rules"
+    ],
+    "summary": "Get Rules",
+    "description": "Every rule, threshold and formula behind a number on screen (the 'How is this calculated?' source).",
+    "operationId": "get_rules_api_v1_rules_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "type": "object",
+         "title": "Response Get Rules Api V1 Rules Get"
+        }
+       }
+      }
+     },
+     "404": {
+      "description": "Not Found",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      }
+     },
+     "422": {
+      "description": "Unprocessable Content",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/accounts": {
+   "get": {
+    "tags": [
+     "accounts"
+    ],
+    "summary": "Get Accounts",
+    "operationId": "get_accounts_api_v1_datasets__dataset_id__accounts_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "range",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "24h",
+        "7d",
+        "all"
+       ],
+       "type": "string",
+       "default": "7d",
+       "title": "Range"
+      }
+     },
+     {
+      "name": "sort",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "username",
+        "attempts",
+        "source_ips",
+        "share_pct",
+        "last_seen",
+        "successful_logins"
+       ],
+       "type": "string",
+       "default": "attempts",
+       "title": "Sort"
+      }
+     },
+     {
+      "name": "dir",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "asc",
+        "desc"
+       ],
+       "type": "string",
+       "default": "desc",
+       "title": "Dir"
+      }
+     },
+     {
+      "name": "q",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Q"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 500,
+       "minimum": 1,
+       "default": 25,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "offset",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 0,
+       "default": 0,
+       "title": "Offset"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPage"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/incidents": {
+   "get": {
+    "tags": [
+     "incidents"
+    ],
+    "summary": "Get Incidents",
+    "operationId": "get_incidents_api_v1_datasets__dataset_id__incidents_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "range",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "24h",
+        "7d",
+        "all"
+       ],
+       "type": "string",
+       "default": "7d",
+       "title": "Range"
+      }
+     },
+     {
+      "name": "rule",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Rule"
+      }
+     },
+     {
+      "name": "severity",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "enum": [
+          "Critical",
+          "High",
+          "Medium",
+          "Low",
+          "No incident"
+         ],
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Severity"
+      }
+     },
+     {
+      "name": "q",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Q"
+      }
+     },
+     {
+      "name": "sort",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "start_ts",
+        "incident_id",
+        "severity",
+        "attempts",
+        "ip"
+       ],
+       "type": "string",
+       "default": "start_ts",
+       "title": "Sort"
+      }
+     },
+     {
+      "name": "dir",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "enum": [
+        "asc",
+        "desc"
+       ],
+       "type": "string",
+       "default": "desc",
+       "title": "Dir"
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "maximum": 500,
+       "minimum": 1,
+       "default": 25,
+       "title": "Limit"
+      }
+     },
+     {
+      "name": "offset",
+      "in": "query",
+      "required": false,
+      "schema": {
+       "type": "integer",
+       "minimum": 0,
+       "default": 0,
+       "title": "Offset"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/IncidentPage"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/controls": {
+   "get": {
+    "tags": [
+     "controls"
+    ],
+    "summary": "Get Controls",
+    "operationId": "get_controls_api_v1_datasets__dataset_id__controls_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ControlsOut"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/forecast": {
+   "get": {
+    "tags": [
+     "forecast"
+    ],
+    "summary": "Get Forecast",
+    "operationId": "get_forecast_api_v1_datasets__dataset_id__forecast_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ForecastOut"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/reports": {
+   "get": {
+    "tags": [
+     "reports"
+    ],
+    "summary": "Get Reports",
+    "operationId": "get_reports_api_v1_datasets__dataset_id__reports_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReportsOut"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/datasets/{dataset_id}/reports/download": {
+   "get": {
+    "tags": [
+     "reports"
+    ],
+    "summary": "Download Report",
+    "description": "Only files in the report catalogue can be downloaded.",
+    "operationId": "download_report_api_v1_datasets__dataset_id__reports_download_get",
+    "parameters": [
+     {
+      "name": "dataset_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Dataset Id"
+      }
+     },
+     {
+      "name": "file",
+      "in": "query",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "File"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  },
+  "/api/v1/jobs/{job_id}": {
+   "get": {
+    "tags": [
+     "datasets"
+    ],
+    "summary": "Get Job",
+    "operationId": "get_job_api_v1_jobs__job_id__get",
+    "parameters": [
+     {
+      "name": "job_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string",
+       "title": "Job Id"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successful Response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/JobOut"
+        }
+       }
+      }
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Problem"
+        }
+       }
+      },
+      "description": "Unprocessable Content"
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "AccountPage": {
+    "properties": {
+     "range": {
+      "type": "string",
+      "title": "Range"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "limit": {
+      "type": "integer",
+      "title": "Limit"
+     },
+     "offset": {
+      "type": "integer",
+      "title": "Offset"
+     },
+     "rows": {
+      "items": {
+       "$ref": "#/components/schemas/AccountRow"
+      },
+      "type": "array",
+      "title": "Rows"
+     },
+     "top": {
+      "items": {
+       "$ref": "#/components/schemas/AccountTop"
+      },
+      "type": "array",
+      "title": "Top"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "range",
+     "total",
+     "limit",
+     "offset",
+     "rows",
+     "top",
+     "caption"
+    ],
+    "title": "AccountPage"
+   },
+   "AccountRow": {
+    "properties": {
+     "username": {
+      "type": "string",
+      "title": "Username"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     },
+     "source_ips": {
+      "type": "integer",
+      "title": "Source Ips"
+     },
+     "share_pct": {
+      "type": "number",
+      "title": "Share Pct"
+     },
+     "privileged": {
+      "type": "boolean",
+      "title": "Privileged"
+     },
+     "exists": {
+      "type": "boolean",
+      "title": "Exists"
+     },
+     "successful_logins": {
+      "type": "integer",
+      "title": "Successful Logins"
+     },
+     "last_seen": {
+      "type": "string",
+      "title": "Last Seen"
+     }
+    },
+    "type": "object",
+    "required": [
+     "username",
+     "attempts",
+     "source_ips",
+     "share_pct",
+     "privileged",
+     "exists",
+     "successful_logins",
+     "last_seen"
+    ],
+    "title": "AccountRow"
+   },
+   "AccountTop": {
+    "properties": {
+     "username": {
+      "type": "string",
+      "title": "Username"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     }
+    },
+    "type": "object",
+    "required": [
+     "username",
+     "attempts"
+    ],
+    "title": "AccountTop"
+   },
+   "Anomaly": {
+    "properties": {
+     "start_ts": {
+      "type": "string",
+      "title": "Start Ts"
+     },
+     "end_ts": {
+      "type": "string",
+      "title": "End Ts"
+     },
+     "peak_attempts": {
+      "type": "integer",
+      "title": "Peak Attempts"
+     },
+     "hours": {
+      "type": "integer",
+      "title": "Hours"
+     },
+     "rule_id": {
+      "type": "string",
+      "title": "Rule Id"
+     },
+     "rule": {
+      "type": "string",
+      "title": "Rule"
+     }
+    },
+    "type": "object",
+    "required": [
+     "start_ts",
+     "end_ts",
+     "peak_attempts",
+     "hours",
+     "rule_id",
+     "rule"
+    ],
+    "title": "Anomaly"
+   },
+   "AnomalyRule": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "label"
+    ],
+    "title": "AnomalyRule"
+   },
+   "AttackerDetail": {
+    "properties": {
+     "ip": {
+      "type": "string",
+      "title": "Ip"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "reason": {
+      "type": "string",
+      "title": "Reason"
+     },
+     "action": {
+      "type": "string",
+      "title": "Action"
+     },
+     "techniques": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Techniques"
+     },
+     "risk": {
+      "$ref": "#/components/schemas/Risk"
+     },
+     "incidents": {
+      "items": {
+       "$ref": "#/components/schemas/IncidentRow"
+      },
+      "type": "array",
+      "title": "Incidents"
+     },
+     "first_seen": {
+      "type": "string",
+      "title": "First Seen"
+     },
+     "last_seen": {
+      "type": "string",
+      "title": "Last Seen"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ip",
+     "severity",
+     "reason",
+     "action",
+     "techniques",
+     "risk",
+     "incidents",
+     "first_seen",
+     "last_seen"
+    ],
+    "title": "AttackerDetail"
+   },
+   "AttackerEvents": {
+    "properties": {
+     "ip": {
+      "type": "string",
+      "title": "Ip"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "shown": {
+      "type": "integer",
+      "title": "Shown"
+     },
+     "lines": {
+      "items": {
+       "$ref": "#/components/schemas/LogLine"
+      },
+      "type": "array",
+      "title": "Lines"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ip",
+     "total",
+     "shown",
+     "lines"
+    ],
+    "title": "AttackerEvents"
+   },
+   "AttackerPage": {
+    "properties": {
+     "range": {
+      "type": "string",
+      "title": "Range"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "limit": {
+      "type": "integer",
+      "title": "Limit"
+     },
+     "offset": {
+      "type": "integer",
+      "title": "Offset"
+     },
+     "rows": {
+      "items": {
+       "$ref": "#/components/schemas/AttackerRow"
+      },
+      "type": "array",
+      "title": "Rows"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "range",
+     "total",
+     "limit",
+     "offset",
+     "rows",
+     "caption"
+    ],
+    "title": "AttackerPage"
+   },
+   "AttackerRow": {
+    "properties": {
+     "rank": {
+      "type": "integer",
+      "title": "Rank"
+     },
+     "ip": {
+      "type": "string",
+      "title": "Ip"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     },
+     "first_seen": {
+      "type": "string",
+      "title": "First Seen"
+     },
+     "last_seen": {
+      "type": "string",
+      "title": "Last Seen"
+     },
+     "accounts": {
+      "type": "integer",
+      "title": "Accounts"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "techniques": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Techniques"
+     },
+     "action": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Action"
+     },
+     "top_incident_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Top Incident Id"
+     },
+     "reason": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reason"
+     },
+     "risk_score": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Risk Score"
+     },
+     "risk_tier": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Risk Tier"
+     },
+     "spark14": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "title": "Spark14"
+     }
+    },
+    "type": "object",
+    "required": [
+     "rank",
+     "ip",
+     "attempts",
+     "first_seen",
+     "last_seen",
+     "accounts",
+     "severity",
+     "techniques",
+     "spark14"
+    ],
+    "title": "AttackerRow"
+   },
+   "Backtest": {
+    "properties": {
+     "hourly": {
+      "items": {
+       "$ref": "#/components/schemas/BacktestRow"
+      },
+      "type": "array",
+      "title": "Hourly"
+     },
+     "daily": {
+      "items": {
+       "$ref": "#/components/schemas/BacktestRow"
+      },
+      "type": "array",
+      "title": "Daily"
+     }
+    },
+    "type": "object",
+    "required": [
+     "hourly",
+     "daily"
+    ],
+    "title": "Backtest"
+   },
+   "BacktestRow": {
+    "properties": {
+     "model": {
+      "type": "string",
+      "title": "Model"
+     },
+     "MAE": {
+      "type": "number",
+      "title": "Mae"
+     },
+     "RMSE": {
+      "type": "number",
+      "title": "Rmse"
+     },
+     "bias": {
+      "type": "number",
+      "title": "Bias"
+     },
+     "folds": {
+      "type": "integer",
+      "title": "Folds"
+     },
+     "skill_vs_naive_pct": {
+      "type": "number",
+      "title": "Skill Vs Naive Pct"
+     }
+    },
+    "type": "object",
+    "required": [
+     "model",
+     "MAE",
+     "RMSE",
+     "bias",
+     "folds",
+     "skill_vs_naive_pct"
+    ],
+    "title": "BacktestRow"
+   },
+   "Body_upload_dataset_api_v1_datasets_post": {
+    "properties": {
+     "file": {
+      "type": "string",
+      "contentMediaType": "application/octet-stream",
+      "title": "File"
+     },
+     "year": {
+      "type": "integer",
+      "title": "Year"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     }
+    },
+    "type": "object",
+    "required": [
+     "file",
+     "year"
+    ],
+    "title": "Body_upload_dataset_api_v1_datasets_post"
+   },
+   "BySeverity": {
+    "properties": {
+     "rows": {
+      "items": {
+       "$ref": "#/components/schemas/SeverityRow"
+      },
+      "type": "array",
+      "title": "Rows"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     },
+     "rule": {
+      "type": "string",
+      "title": "Rule"
+     }
+    },
+    "type": "object",
+    "required": [
+     "rows",
+     "caption",
+     "rule"
+    ],
+    "title": "BySeverity"
+   },
+   "Cell": {
+    "properties": {
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "value": {
+      "type": "integer",
+      "title": "Value"
+     },
+     "of": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Of"
+     },
+     "previous": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Previous"
+     },
+     "change_pct": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Change Pct"
+     },
+     "spark": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "integer"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Spark"
+     }
+    },
+    "type": "object",
+    "required": [
+     "key",
+     "label",
+     "value"
+    ],
+    "title": "Cell"
+   },
+   "Component": {
+    "properties": {
+     "key": {
+      "type": "string",
+      "title": "Key"
+     },
+     "label": {
+      "type": "string",
+      "title": "Label"
+     },
+     "formula": {
+      "type": "string",
+      "title": "Formula"
+     },
+     "meaning": {
+      "type": "string",
+      "title": "Meaning"
+     },
+     "weight": {
+      "type": "number",
+      "title": "Weight"
+     },
+     "points": {
+      "type": "number",
+      "title": "Points"
+     }
+    },
+    "type": "object",
+    "required": [
+     "key",
+     "label",
+     "formula",
+     "meaning",
+     "weight",
+     "points"
+    ],
+    "title": "Component"
+   },
+   "ControlRow": {
+    "properties": {
+     "control_id": {
+      "type": "string",
+      "title": "Control Id"
+     },
+     "domain": {
+      "type": "string",
+      "title": "Domain"
+     },
+     "control_objective": {
+      "type": "string",
+      "title": "Control Objective"
+     },
+     "risk_addressed": {
+      "type": "string",
+      "title": "Risk Addressed"
+     },
+     "test_procedure": {
+      "type": "string",
+      "title": "Test Procedure"
+     },
+     "population_description": {
+      "type": "string",
+      "title": "Population Description"
+     },
+     "population": {
+      "type": "integer",
+      "title": "Population"
+     },
+     "exceptions": {
+      "type": "integer",
+      "title": "Exceptions"
+     },
+     "result": {
+      "type": "string",
+      "title": "Result"
+     },
+     "evidence": {
+      "type": "string",
+      "title": "Evidence"
+     },
+     "recommendation": {
+      "type": "string",
+      "title": "Recommendation"
+     },
+     "framework_reference": {
+      "type": "string",
+      "title": "Framework Reference"
+     }
+    },
+    "type": "object",
+    "required": [
+     "control_id",
+     "domain",
+     "control_objective",
+     "risk_addressed",
+     "test_procedure",
+     "population_description",
+     "population",
+     "exceptions",
+     "result",
+     "evidence",
+     "recommendation",
+     "framework_reference"
+    ],
+    "title": "ControlRow"
+   },
+   "ControlsOut": {
+    "properties": {
+     "rows": {
+      "items": {
+       "$ref": "#/components/schemas/ControlRow"
+      },
+      "type": "array",
+      "title": "Rows"
+     },
+     "summary": {
+      "items": {
+       "$ref": "#/components/schemas/ResultCount"
+      },
+      "type": "array",
+      "title": "Summary"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "rows",
+     "summary",
+     "caption"
+    ],
+    "title": "ControlsOut"
+   },
+   "DatasetSummary": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "filename": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "period_start": {
+      "type": "string",
+      "title": "Period Start"
+     },
+     "period_end": {
+      "type": "string",
+      "title": "Period End"
+     },
+     "lines_total": {
+      "type": "integer",
+      "title": "Lines Total"
+     },
+     "uploaded_at": {
+      "type": "string",
+      "title": "Uploaded At"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "filename",
+     "period_start",
+     "period_end",
+     "lines_total",
+     "uploaded_at"
+    ],
+    "title": "DatasetSummary"
+   },
+   "FPoint": {
+    "properties": {
+     "actual": {
+      "items": {
+       "prefixItems": [
+        {
+         "type": "string"
+        },
+        {
+         "anyOf": [
+          {
+           "type": "integer"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        }
+       ],
+       "type": "array",
+       "maxItems": 2,
+       "minItems": 2
+      },
+      "type": "array",
+      "title": "Actual"
+     },
+     "forecast": {
+      "items": {
+       "prefixItems": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "number"
+        },
+        {
+         "type": "number"
+        },
+        {
+         "type": "number"
+        }
+       ],
+       "type": "array",
+       "maxItems": 4,
+       "minItems": 4
+      },
+      "type": "array",
+      "title": "Forecast"
+     }
+    },
+    "type": "object",
+    "required": [
+     "actual",
+     "forecast"
+    ],
+    "title": "FPoint"
+   },
+   "ForecastOut": {
+    "properties": {
+     "outlook": {
+      "$ref": "#/components/schemas/Outlook"
+     },
+     "models": {
+      "$ref": "#/components/schemas/Models"
+     },
+     "hourly": {
+      "$ref": "#/components/schemas/FPoint"
+     },
+     "daily": {
+      "$ref": "#/components/schemas/FPoint"
+     },
+     "backtest": {
+      "$ref": "#/components/schemas/Backtest"
+     },
+     "confidence_rules": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Confidence Rules"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "outlook",
+     "models",
+     "hourly",
+     "daily",
+     "backtest",
+     "confidence_rules",
+     "caption"
+    ],
+    "title": "ForecastOut"
+   },
+   "Gap": {
+    "properties": {
+     "start_ts": {
+      "type": "string",
+      "title": "Start Ts"
+     },
+     "end_ts": {
+      "type": "string",
+      "title": "End Ts"
+     },
+     "hours": {
+      "type": "integer",
+      "title": "Hours"
+     }
+    },
+    "type": "object",
+    "required": [
+     "start_ts",
+     "end_ts",
+     "hours"
+    ],
+    "title": "Gap"
+   },
+   "GapSpan": {
+    "properties": {
+     "start": {
+      "type": "string",
+      "title": "Start"
+     },
+     "end": {
+      "type": "string",
+      "title": "End"
+     },
+     "hours": {
+      "type": "integer",
+      "title": "Hours"
+     }
+    },
+    "type": "object",
+    "required": [
+     "start",
+     "end",
+     "hours"
+    ],
+    "title": "GapSpan"
+   },
+   "IncidentFull": {
+    "properties": {
+     "incident_id": {
+      "type": "string",
+      "title": "Incident Id"
+     },
+     "rule": {
+      "type": "string",
+      "title": "Rule"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "technique_id": {
+      "type": "string",
+      "title": "Technique Id"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "priority": {
+      "type": "string",
+      "title": "Priority"
+     },
+     "ip": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Ip"
+     },
+     "username": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Username"
+     },
+     "start_ts": {
+      "type": "string",
+      "title": "Start Ts"
+     },
+     "end_ts": {
+      "type": "string",
+      "title": "End Ts"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     },
+     "distinct_users": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Distinct Users"
+     },
+     "distinct_ips": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Distinct Ips"
+     },
+     "peak_window_attempts": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Peak Window Attempts"
+     },
+     "evidence": {
+      "type": "string",
+      "title": "Evidence"
+     },
+     "response_target": {
+      "type": "string",
+      "title": "Response Target"
+     }
+    },
+    "type": "object",
+    "required": [
+     "incident_id",
+     "rule",
+     "title",
+     "technique_id",
+     "severity",
+     "priority",
+     "start_ts",
+     "end_ts",
+     "attempts",
+     "evidence",
+     "response_target"
+    ],
+    "title": "IncidentFull"
+   },
+   "IncidentPage": {
+    "properties": {
+     "range": {
+      "type": "string",
+      "title": "Range"
+     },
+     "total": {
+      "type": "integer",
+      "title": "Total"
+     },
+     "limit": {
+      "type": "integer",
+      "title": "Limit"
+     },
+     "offset": {
+      "type": "integer",
+      "title": "Offset"
+     },
+     "rows": {
+      "items": {
+       "$ref": "#/components/schemas/IncidentFull"
+      },
+      "type": "array",
+      "title": "Rows"
+     },
+     "by_severity": {
+      "items": {
+       "$ref": "#/components/schemas/SeverityCount"
+      },
+      "type": "array",
+      "title": "By Severity"
+     },
+     "rules": {
+      "items": {
+       "$ref": "#/components/schemas/RuleRef"
+      },
+      "type": "array",
+      "title": "Rules"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "range",
+     "total",
+     "limit",
+     "offset",
+     "rows",
+     "by_severity",
+     "rules",
+     "caption"
+    ],
+    "title": "IncidentPage"
+   },
+   "IncidentRow": {
+    "properties": {
+     "incident_id": {
+      "type": "string",
+      "title": "Incident Id"
+     },
+     "rule": {
+      "type": "string",
+      "title": "Rule"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "technique_id": {
+      "type": "string",
+      "title": "Technique Id"
+     },
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "priority": {
+      "type": "string",
+      "title": "Priority"
+     },
+     "start_ts": {
+      "type": "string",
+      "title": "Start Ts"
+     },
+     "end_ts": {
+      "type": "string",
+      "title": "End Ts"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     },
+     "evidence": {
+      "type": "string",
+      "title": "Evidence"
+     }
+    },
+    "type": "object",
+    "required": [
+     "incident_id",
+     "rule",
+     "title",
+     "technique_id",
+     "severity",
+     "priority",
+     "start_ts",
+     "end_ts",
+     "attempts",
+     "evidence"
+    ],
+    "title": "IncidentRow"
+   },
+   "JobOut": {
+    "properties": {
+     "job_id": {
+      "type": "string",
+      "title": "Job Id"
+     },
+     "dataset_id": {
+      "type": "string",
+      "title": "Dataset Id"
+     },
+     "filename": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "status": {
+      "type": "string",
+      "title": "Status"
+     },
+     "steps": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Steps"
+     },
+     "error": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Error"
+     }
+    },
+    "type": "object",
+    "required": [
+     "job_id",
+     "dataset_id",
+     "filename",
+     "status",
+     "steps"
+    ],
+    "title": "JobOut"
+   },
+   "LogLine": {
+    "properties": {
+     "ts": {
+      "type": "string",
+      "title": "Ts"
+     },
+     "raw": {
+      "type": "string",
+      "title": "Raw"
+     }
+    },
+    "type": "object",
+    "required": [
+     "ts",
+     "raw"
+    ],
+    "title": "LogLine"
+   },
+   "Models": {
+    "properties": {
+     "hourly": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Hourly"
+     },
+     "daily": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Daily"
+     }
+    },
+    "type": "object",
+    "title": "Models"
+   },
+   "Outlook": {
+    "properties": {
+     "level": {
+      "type": "string",
+      "title": "Level"
+     },
+     "headline": {
+      "type": "string",
+      "title": "Headline"
+     },
+     "message": {
+      "type": "string",
+      "title": "Message"
+     },
+     "confidence": {
+      "type": "string",
+      "title": "Confidence"
+     },
+     "reasons": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "title": "Reasons"
+     },
+     "last24h": {
+      "type": "integer",
+      "title": "Last24H"
+     },
+     "next24h": {
+      "type": "integer",
+      "title": "Next24H"
+     },
+     "baseline_daily": {
+      "type": "integer",
+      "title": "Baseline Daily"
+     },
+     "ratio": {
+      "type": "number",
+      "title": "Ratio"
+     }
+    },
+    "type": "object",
+    "required": [
+     "level",
+     "headline",
+     "message",
+     "confidence",
+     "reasons",
+     "last24h",
+     "next24h",
+     "baseline_daily",
+     "ratio"
+    ],
+    "title": "Outlook"
+   },
+   "Overview": {
+    "properties": {
+     "range": {
+      "type": "string",
+      "title": "Range"
+     },
+     "window": {
+      "$ref": "#/components/schemas/Window"
+     },
+     "previous_window": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Window"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "change_note": {
+      "type": "string",
+      "title": "Change Note"
+     },
+     "trust": {
+      "$ref": "#/components/schemas/Trust"
+     },
+     "cells": {
+      "items": {
+       "$ref": "#/components/schemas/Cell"
+      },
+      "type": "array",
+      "title": "Cells"
+     },
+     "timeseries": {
+      "$ref": "#/components/schemas/TimeSeries"
+     },
+     "by_severity": {
+      "$ref": "#/components/schemas/BySeverity"
+     }
+    },
+    "type": "object",
+    "required": [
+     "range",
+     "window",
+     "previous_window",
+     "change_note",
+     "trust",
+     "cells",
+     "timeseries",
+     "by_severity"
+    ],
+    "title": "Overview"
+   },
+   "Problem": {
+    "properties": {
+     "type": {
+      "type": "string",
+      "title": "Type",
+      "default": "about:blank"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "status": {
+      "type": "integer",
+      "title": "Status"
+     },
+     "detail": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Detail"
+     }
+    },
+    "type": "object",
+    "required": [
+     "title",
+     "status"
+    ],
+    "title": "Problem"
+   },
+   "ReportRow": {
+    "properties": {
+     "file": {
+      "type": "string",
+      "title": "File"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     },
+     "description": {
+      "type": "string",
+      "title": "Description"
+     },
+     "audience": {
+      "type": "string",
+      "title": "Audience"
+     },
+     "size_bytes": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Size Bytes"
+     },
+     "available": {
+      "type": "boolean",
+      "title": "Available"
+     }
+    },
+    "type": "object",
+    "required": [
+     "file",
+     "title",
+     "description",
+     "audience",
+     "available"
+    ],
+    "title": "ReportRow"
+   },
+   "ReportsOut": {
+    "properties": {
+     "rows": {
+      "items": {
+       "$ref": "#/components/schemas/ReportRow"
+      },
+      "type": "array",
+      "title": "Rows"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "rows",
+     "caption"
+    ],
+    "title": "ReportsOut"
+   },
+   "ResultCount": {
+    "properties": {
+     "result": {
+      "type": "string",
+      "title": "Result"
+     },
+     "count": {
+      "type": "integer",
+      "title": "Count"
+     }
+    },
+    "type": "object",
+    "required": [
+     "result",
+     "count"
+    ],
+    "title": "ResultCount"
+   },
+   "Risk": {
+    "properties": {
+     "score": {
+      "type": "number",
+      "title": "Score"
+     },
+     "tier": {
+      "type": "string",
+      "title": "Tier"
+     },
+     "components": {
+      "items": {
+       "$ref": "#/components/schemas/Component"
+      },
+      "type": "array",
+      "title": "Components"
+     },
+     "formula": {
+      "type": "string",
+      "title": "Formula"
+     },
+     "compromise_flag": {
+      "type": "boolean",
+      "title": "Compromise Flag"
+     }
+    },
+    "type": "object",
+    "required": [
+     "score",
+     "tier",
+     "components",
+     "formula",
+     "compromise_flag"
+    ],
+    "title": "Risk"
+   },
+   "RuleRef": {
+    "properties": {
+     "id": {
+      "type": "string",
+      "title": "Id"
+     },
+     "title": {
+      "type": "string",
+      "title": "Title"
+     }
+    },
+    "type": "object",
+    "required": [
+     "id",
+     "title"
+    ],
+    "title": "RuleRef"
+   },
+   "SeverityCount": {
+    "properties": {
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "count": {
+      "type": "integer",
+      "title": "Count"
+     }
+    },
+    "type": "object",
+    "required": [
+     "severity",
+     "count"
+    ],
+    "title": "SeverityCount"
+   },
+   "SeverityRow": {
+    "properties": {
+     "severity": {
+      "type": "string",
+      "title": "Severity"
+     },
+     "attempts": {
+      "type": "integer",
+      "title": "Attempts"
+     }
+    },
+    "type": "object",
+    "required": [
+     "severity",
+     "attempts"
+    ],
+    "title": "SeverityRow"
+   },
+   "TimeSeries": {
+    "properties": {
+     "points": {
+      "items": {
+       "prefixItems": [
+        {
+         "type": "string"
+        },
+        {
+         "anyOf": [
+          {
+           "type": "integer"
+          },
+          {
+           "type": "null"
+          }
+         ]
+        }
+       ],
+       "type": "array",
+       "maxItems": 2,
+       "minItems": 2
+      },
+      "type": "array",
+      "title": "Points"
+     },
+     "gaps": {
+      "items": {
+       "$ref": "#/components/schemas/GapSpan"
+      },
+      "type": "array",
+      "title": "Gaps"
+     },
+     "anomalies": {
+      "items": {
+       "$ref": "#/components/schemas/Anomaly"
+      },
+      "type": "array",
+      "title": "Anomalies"
+     },
+     "anomaly_rule": {
+      "$ref": "#/components/schemas/AnomalyRule"
+     },
+     "caption": {
+      "type": "string",
+      "title": "Caption"
+     }
+    },
+    "type": "object",
+    "required": [
+     "points",
+     "gaps",
+     "anomalies",
+     "anomaly_rule",
+     "caption"
+    ],
+    "title": "TimeSeries"
+   },
+   "Trust": {
+    "properties": {
+     "filename": {
+      "type": "string",
+      "title": "Filename"
+     },
+     "period_start": {
+      "type": "string",
+      "title": "Period Start"
+     },
+     "period_end": {
+      "type": "string",
+      "title": "Period End"
+     },
+     "lines_total": {
+      "type": "integer",
+      "title": "Lines Total"
+     },
+     "lines_unmatched": {
+      "type": "integer",
+      "title": "Lines Unmatched"
+     },
+     "lines_other": {
+      "type": "integer",
+      "title": "Lines Other"
+     },
+     "unparsed_pct": {
+      "type": "number",
+      "title": "Unparsed Pct"
+     },
+     "last_upload": {
+      "type": "string",
+      "title": "Last Upload"
+     },
+     "year_assumed": {
+      "type": "integer",
+      "title": "Year Assumed"
+     },
+     "gaps": {
+      "items": {
+       "$ref": "#/components/schemas/Gap"
+      },
+      "type": "array",
+      "title": "Gaps"
+     }
+    },
+    "type": "object",
+    "required": [
+     "filename",
+     "period_start",
+     "period_end",
+     "lines_total",
+     "lines_unmatched",
+     "lines_other",
+     "unparsed_pct",
+     "last_upload",
+     "year_assumed",
+     "gaps"
+    ],
+    "title": "Trust"
+   },
+   "Window": {
+    "properties": {
+     "start": {
+      "type": "string",
+      "title": "Start"
+     },
+     "end": {
+      "type": "string",
+      "title": "End"
+     }
+    },
+    "type": "object",
+    "required": [
+     "start",
+     "end"
+    ],
+    "title": "Window"
+   }
+  }
+ }
+}

@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+
+# Web app
+web/node_modules/
+web/dist/
+
+# Data and generated output (regenerate with the pipeline)
+data/processed/*.db
+data/datasets/
+data/reports/
+data/raw/OpenSSH_full.log
+data/raw/synthetic_*.log
+reports/demo/
+*.partial.db

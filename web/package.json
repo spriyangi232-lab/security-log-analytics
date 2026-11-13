@@ -1,0 +1,31 @@
+{
+  "name": "sla-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "types": "openapi-typescript ../api/openapi.json -o src/api/schema.d.ts"
+  },
+  "dependencies": {
+    "@carbon/react": "^1.120.0",
+    "@carbon/styles": "^1.119.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "echarts": "^6.1.0",
+    "echarts-for-react": "^3.0.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sass": "^1.108.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "5.6",
+    "vite": "^8.3.8"
+  }
+}

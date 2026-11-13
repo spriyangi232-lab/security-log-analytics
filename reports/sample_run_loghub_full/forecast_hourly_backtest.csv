@@ -1,0 +1,5 @@
+model,MAE,RMSE,bias,folds,skill_vs_naive_pct
+ets,776.35,1347.46,-713.79,3,33.1
+sarima,777.54,1082.27,-664.39,3,33.0
+mean_profile,1157.95,1302.52,-985.66,3,0.3
+seasonal_naive,1161.11,1590.85,-1089.22,3,0.0
