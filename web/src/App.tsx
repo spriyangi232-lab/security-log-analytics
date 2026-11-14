@@ -83,8 +83,8 @@ export default function App() {
         <div className="app__col">
         {FIX && (
           <div className="demo-note" role="note">
-            Read-only online demo: a saved excerpt of real results from the public Loghub OpenSSH log (655,147 lines).
-            Search, sorting and paging show the saved first page only, and uploads are off. Run the app locally for the full version.
+            Read-only online demo: real results from the public Loghub OpenSSH log (655,147 lines), saved with the site.
+            Uploads are off. Run the app locally to analyse your own log.
           </div>
         )}
         <main className="app__main">

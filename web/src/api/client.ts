@@ -1,4 +1,5 @@
 import type { components } from './schema';
+import { queryAccounts, queryAttackers, queryIncidents } from './fixtureQuery';
 
 export type Overview = components['schemas']['Overview'];
 export type AttackerPage = components['schemas']['AttackerPage'];
@@ -49,10 +50,18 @@ async function get<T>(path: string, fixture?: string): Promise<T> {
   return r.json() as Promise<T>;
 }
 
+// Demo mode: each full table is downloaded once per range, then filtered, sorted and paged in the browser.
+const tables = new Map<string, Promise<any>>(); // eslint-disable-line @typescript-eslint/no-explicit-any
+function table<T>(fixture: string): Promise<T> {
+  if (!tables.has(fixture)) tables.set(fixture, get<T>('', fixture).catch((e) => { tables.delete(fixture); throw e; }));
+  return tables.get(fixture)!;
+}
+
 export const api = {
   datasets: () => get<DatasetSummary[]>('/datasets', 'datasets'),
   overview: (id: string, range: Range) => get<Overview>(`/datasets/${id}/overview?range=${range}`, `overview_${range}`),
   attackers: (id: string, p: { range: Range; sort: SortKey; dir: 'asc' | 'desc'; q: string; severity: string; limit: number; offset: number }) => {
+    if (FIX) return table<any>(`attackers_${p.range}`).then((t) => queryAttackers(t, p) as unknown as AttackerPage); // eslint-disable-line @typescript-eslint/no-explicit-any
     const qs = new URLSearchParams({ range: p.range, sort: p.sort, dir: p.dir, limit: String(p.limit), offset: String(p.offset) });
     if (p.q) qs.set('q', p.q);
     if (p.severity) qs.set('severity', p.severity);
@@ -61,11 +70,13 @@ export const api = {
   attacker: (id: string, ip: string) => get<AttackerDetail>(`/datasets/${id}/attackers/${ip}`, `attacker_${ip}`),
   events: (id: string, ip: string) => get<AttackerEvents>(`/datasets/${id}/attackers/${ip}/events?limit=50`, `events_${ip}`),
   accounts: (id: string, p: { range: Range; sort: string; dir: 'asc' | 'desc'; q: string; limit: number; offset: number }) => {
+    if (FIX) return table<any>(`accounts_${p.range}`).then((t) => queryAccounts(t, p) as unknown as AccountPage); // eslint-disable-line @typescript-eslint/no-explicit-any
     const qs = new URLSearchParams({ range: p.range, sort: p.sort, dir: p.dir, limit: String(p.limit), offset: String(p.offset) });
     if (p.q) qs.set('q', p.q);
     return get<AccountPage>(`/datasets/${id}/accounts?${qs}`, `accounts_${p.range}`);
   },
   incidents: (id: string, p: { range: Range; sort: string; dir: 'asc' | 'desc'; q: string; severity: string; rule: string; limit: number; offset: number }) => {
+    if (FIX) return table<any>(`incidents_${p.range}`).then((t) => queryIncidents(t, p) as unknown as IncidentPage); // eslint-disable-line @typescript-eslint/no-explicit-any
     const qs = new URLSearchParams({ range: p.range, sort: p.sort, dir: p.dir, limit: String(p.limit), offset: String(p.offset) });
     if (p.q) qs.set('q', p.q);
     if (p.severity) qs.set('severity', p.severity);
