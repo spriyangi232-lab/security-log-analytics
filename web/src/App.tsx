@@ -80,13 +80,14 @@ export default function App() {
             </div>
           ))}
         </nav>
+        <div className="app__col">
+        {FIX && (
+          <div className="demo-note" role="note">
+            Read-only online demo: a saved excerpt of real results from the public Loghub OpenSSH log (655,147 lines).
+            Search, sorting and paging show the saved first page only, and uploads are off. Run the app locally for the full version.
+          </div>
+        )}
         <main className="app__main">
-          {FIX && (
-            <div className="demo-note" role="note">
-              Read-only online demo: a saved excerpt of real results from the public Loghub OpenSSH log (655,147 lines).
-              Search, sorting and paging show the saved first page only, and uploads are off. Run the app locally for the full version.
-            </div>
-          )}
           {err && <div className="app__content"><div className="state" role="alert"><h3>The analytics service is not reachable</h3><p>{err}. Start it with <code>uvicorn api.main:app</code> and reload.</p></div></div>}
           {!err && datasets && datasets.length === 0 && path !== '/upload' && (
             <div className="app__content"><div className="state"><h3>No datasets yet</h3>
@@ -95,6 +96,7 @@ export default function App() {
           {!err && !datasets && <div className="app__content"><div aria-busy="true" className="skeleton" style={{ width: 200 }} /></div>}
           {path === '/upload' ? page() : dataset && page()}
         </main>
+        </div>
       </div>
     </>
   );

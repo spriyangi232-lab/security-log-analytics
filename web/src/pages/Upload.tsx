@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, FileUploaderDropContainer, FileUploaderItem, InlineNotification, NumberInput, TextInput } from '@carbon/react';
-import { api, type Job } from '../api/client';
+import { api, FIX, type Job } from '../api/client';
 import { PageHeader } from '../components/Table';
 
 const mb = (b: number) => `${(b / 1048576).toFixed(1)} MB`;
@@ -30,6 +30,17 @@ export function Upload({ onDone, onRefresh }: { onDone: (id: string) => void; on
       }, 1500);
     } catch (e) { setBusy(false); setErr((e as Error).message); }
   };
+
+  if (FIX) {
+    return (
+      <div className="app__content">
+        <PageHeader title="Upload logs" />
+        <section className="panel band" style={{ padding: '1rem 1.25rem', maxWidth: '46rem' }}>
+          <p style={{ margin: 0 }}>Uploads are off in the online demo. Run the project locally to analyse your own OpenSSH log.</p>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="app__content">

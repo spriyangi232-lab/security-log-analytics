@@ -44,7 +44,8 @@ body { background: var(--cds-background); color: var(--cds-text-primary); font-f
 // ---- shell
 .app { display: grid; grid-template-columns: 256px 1fr; padding-top: 3rem; min-height: 100%; }
 .app__nav { position: fixed; top: 3rem; bottom: 0; width: 256px; background: #fff; border-right: 1px solid var(--cds-border-subtle); overflow-y: auto; }
-.app__main { grid-column: 2; min-width: 0; display: flex; }
+.app__col { grid-column: 2; min-width: 0; display: flex; flex-direction: column; }
+.app__main { flex: 1; min-width: 0; display: flex; }
 .app__content { flex: 1; min-width: 0; padding: 1rem 1.5rem 3rem; }
 .app__detail { width: 400px; flex: none; border-left: 1px solid var(--cds-border-subtle); background: #fff; position: sticky; top: 3rem; height: calc(100vh - 3rem); overflow-y: auto; }
 
@@ -250,3 +251,6 @@ body { background: var(--cds-background); color: var(--cds-text-primary); font-f
   font-size: 0.8125rem;
   line-height: 1.4;
 }
+
+// Explicit page background, so browsers or embedded viewers in dark mode never paint the transparent canvas black.
+html, body { background: #ffffff; }
